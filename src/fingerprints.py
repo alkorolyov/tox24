@@ -11,6 +11,17 @@ AVALON_FP_SIZE = 1024
 ERG_FP_SIZE = 315  # Constant value, cannot be changed
 FPS_SIZE = MORGAN_FP_SIZE + MORGAN_FP_SIZE + ERG_FP_SIZE
 
+FP_DEFAULT_CONFIG = {
+    'morgan': {
+        'n_bits': 1024,
+        'radius': 2,
+    },
+    'avalon': {
+        'n_bits': 1024,
+    },
+    'erg': {},
+}
+
 
 def fp2numpy(x: ExplicitBitVect):
     return np.frombuffer(x.ToBitString().encode(), 'u1') - ord('0')
@@ -30,10 +41,19 @@ def get_erg_fp(mol) -> np.ndarray:
     return rdReducedGraphs.GetErGFingerprint(mol)
 
 
-def get_fingerprints(mol) -> np.ndarray:
-    fps = [
-        get_morgan_fp(mol),
-        get_avalon_fp(mol),
-        get_erg_fp(mol)
-    ]
+def get_fingerprints(mol, fp_config=None) -> np.ndarray:
+
+    fps = []
+
+    if fp_config is None:
+        fp_config = FP_DEFAULT_CONFIG
+
+    for k, v in fp_config.items():
+        if k == 'morgan':
+            fps.append(get_morgan_fp(mol, **v))
+        elif k == 'avalon':
+            fps.append(get_avalon_fp(mol, **v))
+        elif k == 'erg':
+            fps.append(get_erg_fp(mol))
+
     return np.concatenate(fps)
