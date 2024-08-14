@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 from rdkit.Avalon import pyAvalonTools
 from rdkit.Chem import rdReducedGraphs, rdFingerprintGenerator
@@ -41,14 +42,14 @@ def get_erg_fp(mol) -> np.ndarray:
     return rdReducedGraphs.GetErGFingerprint(mol)
 
 
-def get_fingerprints(mol, fp_config=None) -> np.ndarray:
+def get_fingerprints(mol, config=None) -> np.ndarray:
 
     fps = []
 
-    if fp_config is None:
-        fp_config = FP_DEFAULT_CONFIG
+    if config is None:
+        config = FP_DEFAULT_CONFIG
 
-    for k, v in fp_config.items():
+    for k, v in config.items():
         if k == 'morgan':
             fps.append(get_morgan_fp(mol, **v))
         elif k == 'avalon':
@@ -56,4 +57,4 @@ def get_fingerprints(mol, fp_config=None) -> np.ndarray:
         elif k == 'erg':
             fps.append(get_erg_fp(mol))
 
-    return np.concatenate(fps)
+    return pd.Series(np.concatenate(fps))
