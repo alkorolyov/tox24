@@ -7,6 +7,7 @@ from src.descriptors import get_rd_descriptors, get_md_descriptors
 from joblib import Parallel, delayed
 from rdkit import RDLogger
 
+
 def get_representation(smiles: str, config=None) -> pd.Series | None:
     """
     This function computes the vector representation for a single molecule
@@ -26,19 +27,19 @@ def get_representation(smiles: str, config=None) -> pd.Series | None:
     # default config
     if config is None:
         config = {
-            'fingerprints_config': None,
-            'rdkit_descriptors': None,
-            'morgan_descriptors': None
+            'fps_config': None,
+            'rd_descriptors': None,
+            'md_descriptors': None
         }
 
     results = []
 
     for k, v in config.items():
-        if k == 'fingerprints_config':
-            results.append(get_fingerprints(mol, config=v))
-        elif k == 'rdkit_descriptors':
+        if k == 'fps_config':
+            results.append(get_fingerprints(mol, v))
+        elif k == 'rd_descriptors':
             results.append(get_rd_descriptors(mol, v))
-        elif k == 'morgan_descriptors':
+        elif k == 'md_descriptors':
             results.append(get_md_descriptors(mol, v))
 
     return pd.concat(results)
