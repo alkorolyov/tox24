@@ -28,6 +28,16 @@ class OffsetScaler(BaseEstimator, TransformerMixin):
         return x_trans
 
 
+def get_fps_cols(cols):
+    res = []
+    for c in cols:
+        try:
+            res.append(str(int(c)))
+        except:
+            pass
+    return res
+
+
 def get_fps_offset(cols):
     res = []
     for c in cols:
